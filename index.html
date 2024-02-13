@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/Catmull-RomSpline.css">
+    <meta charset="utf-8">
+    <title>Catmull-Rom Spline</title>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Catmull-Rom Spline</h1>
+    </div>
+
+    <div class="topnav">
+        <a href="index.html">Начална страница</a>
+        <a href="Explanation.html">Описание на алгоритъма</a>
+        <a href="UserGuide.html">Упътване за работа</a>
+    </div>
+    <br>
+    <div class="row">
+        <div class="canvas-container">
+            <canvas id="myCanvas" width="800" height="500"></canvas>
+        </div>
+        <div class="button-container">
+            <button onclick="removePoint()" class="button">
+            Премахни точка
+            <span class="button-text">Премахва последната добавена точка</span>
+            </button>
+            <br />
+            <button onclick="clearScreen()" class="button">
+            Изчисти полето
+            <span class="button-text">Изтрива всички данни в полето</span>
+            </button>
+        </div>
+    </div>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const splinePoints = [];
+        const pointRadius = 5;
+        let draggingIndex = -1;
+        let dragging = false;
+
+        function drawControlPoints() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < splinePoints.length - 1; i++) {
+                const p0 = splinePoints[Math.max(i - 1, 0)];
+                const p1 = splinePoints[i];
+                const p2 = splinePoints[i + 1];
+                const p3 = splinePoints[Math.min(i + 2, splinePoints.length - 1)];
+                for (let t = 0; t <= 1; t += 0.01) {
+                    const x = 0.5 * (
+                        (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t * t * t +
+                        (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t * t +
+                        (-p0.x + p2.x) * t +
+                        (2 * p1.x)
+                    );
+                    const y = 0.5 * (
+                        (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t * t * t +
+                        (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t * t +
+                        (-p0.y + p2.y) * t +
+                        (2 * p1.y)
+                    );
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = 'green';
+            splinePoints.forEach((point, index) => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, pointRadius, 0, Math.PI * 2);
+                ctx.fill();
+                if (index === draggingIndex) {
+                    ctx.strokeStyle = 'red';
+                    ctx.stroke();
+                }
+            });
+
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = 'black';
+            for (let i = 1; i < splinePoints.length - 1; i++) {
+                const p0 = splinePoints[i - 1];
+                const p1 = splinePoints[i];
+                const p2 = splinePoints[i + 1];
+                const vector = { x: p2.x - p0.x, y: p2.y - p0.y };
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p1.x + vector.x, p1.y + vector.y);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+        }
+
+        function drawSpline(color, type) {
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        function addPoint(x, y) {
+            splinePoints.push({ x, y });
+            drawControlPoints();
+        }
+
+        function removePoint() {
+            if (splinePoints.length > 0) {
+                splinePoints.pop();
+                drawControlPoints();
+            }
+        }
+
+        function clearScreen() {
+            splinePoints.length = 0;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        canvas.addEventListener('click', function(event) {
+            if (!dragging) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+                addPoint(mouseX, mouseY);
+            }
+            dragging = false;
+        });
+
+        canvas.addEventListener('mousedown', function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            for (let i = 0; i < splinePoints.length; i++) {
+                const point = splinePoints[i];
+                const distance = Math.sqrt((mouseX - point.x) ** 2 + (mouseY - point.y) ** 2);
+                if (distance <= pointRadius) {
+                    draggingIndex = i;
+                    dragging = true;
+                    break;
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', function(event) {
+            if (draggingIndex !== -1) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+                splinePoints[draggingIndex].x = mouseX;
+                splinePoints[draggingIndex].y = mouseY;
+                drawControlPoints();
+            }
+        });
+
+        canvas.addEventListener('mouseup', function() {
+            draggingIndex = -1;
+        });
+
+        document.getElementById('removePointBtn').addEventListener('click', removePoint);
+        document.getElementById('clearScreenBtn').addEventListener('click', clearScreen);
+   
+    </script>
+    <br>
+    <div class="footer">
+        <p>Created by N. Koykova</p>
+    </div>
+</body>
+</html>

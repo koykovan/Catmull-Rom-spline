@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/Catmull-RomSpline.css">
+    <meta charset="utf-8">
+    <title>Catmull-Rom Spline</title>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Catmull-Rom Spline</h1>
+    </div>
+
+    <div class="topnav">
+        <a href="index.html">Начална страница</a>
+        <a href="Explanation.html">Описание на алгоритъма</a>
+        <a href="UserGuide.html">Упътване за работа</a>
+    </div>
+
+    <div class="row">
+        <div class="column header">
+            <h2>Сплайн на Catmull-Rom (Catmull-Rom Spline)</h2>
+        </div>
+        <div class="column text">
+            <p> &nbsp;&nbsp;&nbsp;&nbsp;
+                Сплайновете на Catmull-Rom са семейство от кубични интерполиращи сплайнове, формулирани така, че допирателната при всяка точка 
+                <img class="img-2" src="img/img2.png" alt="..."> се изчислява с помощта на предишната и следващата точка на сплайна,
+                <img class="img-3" src="img/img3.png" alt="...">. Геометричната матрица се дава от:
+                <br>
+                <img src="img/img1.png" alt="..." class="smaller">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сплайновете на Catmull-Rom имат <img class="img-4" src="img/img4.png" alt="...">
+                непрекъснатост, локален контрол и интерполация, но не лежат в конвекса
+                корпус на техните контролни точки. Обърнете внимание, че допирателната в точка <img class="img-6" src="img/img6.png" alt="..."> не е ясно дефинирана; често задаваме това на <img class="img-5" src="img/img5.png" alt="...">, въпреки че
+                това не е необходимо за присвояването (можем просто да приемем, че кривата не интерполира своите крайни точки).
+                Параметърът τ е известен като „напрежение“ и влияе върху това колко рязко се огъва кривата при (интерполираните)
+                контролните точки (фигура 2). Често се задава на 1/2, но може да се използва всяка разумна стойност за това присвояване.
+                <br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Извеждане:
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Нека изберем един сегмент, p(s). Да предположим, че се определя от 4 контролни точки -
+                <img class="img-7" src="img/img7.png" alt="..."> <img class="img-8" src="img/img8.png" alt="...">, като на фигура 3. 
+                Знаем, че тъй като е кубичен, може да се изрази чрез полиномната форма,
+                <br>
+                <br>
+                <img src="img/img9.png" alt="..." class="center">
+                <p class="figure">Фигура 1: Catmull-Rom spline</p>
+                <br>
+                <img src="img/img10.png" alt="..." class="smaller">
+                <p class="figure">Фигура 2: Ефектът на τ</p>
+                <br>
+                <img src="img/img11.png" alt="..." class="smaller">
+                <p class="figure">Фигура 3: Catmull-Rom spline derivation</p>
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сега трябва да изразим някои ограничения. Разглеждайки фигура 3, намираме следното, 
+                <br>
+                <img src="img/img12.png" alt="..." class="center">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сега комбинираме тези ограничения с (2), и получаваме следното,
+                <br>
+                <img src="img/img13.png" alt="..." class="center">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сега можем да заместим (3) и (5) в (4) и (6), за да получим уравнения, в които c2 и c3 са единственит променливи.
+                <br>
+                <img src="img/img14.png" alt="..." class="center">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сега трябва да е ясно, че като извадим тези две уравнения, можем лесно да решим c2 и c3 в термини на pj и τ (което също е зададено от потребителя). Получаваме
+                <br>
+                <img src="img/img15.png" alt="..." class="center">
+                <br>
+                <img src="img/img16.png" alt="..." class="smaller">
+                <p class="figure">Фигура 4: Функции за смесване на Catmull-Rom за τ = 1/2</p>
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                Сега, ако искаме да формираме основна матрица от това, трябва да групираме всички {pj} членове заедно,
+                <br>
+                <img src="img/img17.png" alt="..." class="center">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                От това трябва да е доста ясно как да попълните геометричната матрица,
+                <br>
+                <img src="img/img18.png" alt="..." class="center">
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;
+                От това можем също да извлечем нашите функции за смесване (вижте фигура 4),
+                <br>
+                <img src="img/img19.png" alt="..." class="center">
+                <br>
+            </p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Created by N. Koykova</p>
+    </div>
+</body>
+</html>
